@@ -4,8 +4,12 @@ import com.fulfilment.application.monolith.warehouses.domain.models.Location;
 import com.fulfilment.application.monolith.warehouses.domain.ports.LocationResolver;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import org.jboss.logging.Logger;
 
 public class LocationGateway implements LocationResolver {
+
+  private static final Logger LOGGER = Logger.getLogger(LocationGateway.class);
 
   private static final List<Location> locations = new ArrayList<>();
 
@@ -22,7 +26,18 @@ public class LocationGateway implements LocationResolver {
 
   @Override
   public Location resolveByIdentifier(String identifier) {
-    // TODO implement this method
-    throw new UnsupportedOperationException("Unimplemented method 'resolveByIdentifier'");
+    LOGGER.debugf("Resolving location for identifier: %s", identifier);
+    Optional<Location> loc = locations.stream()
+        .filter(location -> location.identification.equals(identifier))
+        .findFirst();
+    
+    if (loc.isPresent()) {
+        return loc.get();
+    }
+    else {
+        // TODO: SHould I throw error in this case?
+        LOGGER.warnf("Location NOT found for identifier: %s", identifier);
+        return null;
+    }
   }
 }
