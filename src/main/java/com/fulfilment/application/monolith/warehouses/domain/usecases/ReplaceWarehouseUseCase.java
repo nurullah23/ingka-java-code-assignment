@@ -16,7 +16,20 @@ public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
 
   @Override
   public void replace(Warehouse newWarehouse) {
-    // TODO implement this method
+    Warehouse oldWarehouse = warehouseStore.findByBusinessUnitCode(newWarehouse.businessUnitCode);
+    if (oldWarehouse == null) {
+      throw new IllegalArgumentException("Warehouse to replace not found");
+    }
+
+    // Capacity Accommodation
+    if (newWarehouse.capacity < oldWarehouse.stock) {
+      throw new IllegalArgumentException("New capacity cannot accommodate old stock");
+    }
+
+    // Stock Matching
+    if (!newWarehouse.stock.equals(oldWarehouse.stock)) {
+      throw new IllegalArgumentException("Stock of new warehouse must match old stock");
+    }
 
     warehouseStore.update(newWarehouse);
   }
