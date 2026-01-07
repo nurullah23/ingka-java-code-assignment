@@ -67,7 +67,6 @@ public class WarehouseResourceImpl implements WarehouseResource {
 
   @Override
   public void archiveAWarehouseUnitByID(String id) {
-    //TODO!!!!!!!!!!!
     com.fulfilment.application.monolith.warehouses.domain.models.Warehouse domainWarehouse =
         warehouseStore.findByBusinessUnitCode(id);
     if (domainWarehouse != null) {

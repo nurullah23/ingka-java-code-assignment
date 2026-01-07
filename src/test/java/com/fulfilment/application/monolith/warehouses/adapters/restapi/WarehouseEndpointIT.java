@@ -30,7 +30,7 @@ public class WarehouseEndpointIT {
                     containsString("TILBURG-001"));
 
     // Archive the ZWOLLE-001:
-    given().when().delete(path + "/1").then().statusCode(204);
+    given().when().delete(path + "/MWH.001").then().statusCode(204);
 
     // List all, ZWOLLE-001 should be missing now:
     given()

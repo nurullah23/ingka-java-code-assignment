@@ -4,7 +4,6 @@ import com.fulfilment.application.monolith.warehouses.domain.models.Warehouse;
 import com.fulfilment.application.monolith.warehouses.domain.ports.ArchiveWarehouseOperation;
 import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStore;
 import jakarta.enterprise.context.ApplicationScoped;
-import java.time.ZonedDateTime;
 
 @ApplicationScoped
 public class ArchiveWarehouseUseCase implements ArchiveWarehouseOperation {
@@ -20,7 +19,6 @@ public class ArchiveWarehouseUseCase implements ArchiveWarehouseOperation {
     if (warehouse.archivedAt != null) {
       throw new IllegalStateException("Warehouse is already archived");
     }
-    warehouse.archivedAt = ZonedDateTime.now();
-    warehouseStore.update(warehouse);
+    warehouseStore.remove(warehouse);
   }
 }

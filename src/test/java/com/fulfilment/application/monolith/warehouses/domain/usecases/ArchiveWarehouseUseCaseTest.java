@@ -1,14 +1,17 @@
 package com.fulfilment.application.monolith.warehouses.domain.usecases;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
 import com.fulfilment.application.monolith.warehouses.domain.models.Warehouse;
 import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStore;
-import java.time.ZonedDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.ZonedDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ArchiveWarehouseUseCaseTest {
 
@@ -28,8 +31,7 @@ public class ArchiveWarehouseUseCaseTest {
 
     archiveWarehouseUseCase.archive(warehouse);
 
-    assertNotNull(warehouse.archivedAt);
-    verify(warehouseStore).update(warehouse);
+    verify(warehouseStore).remove(warehouse);
   }
 
   @Test
@@ -39,6 +41,6 @@ public class ArchiveWarehouseUseCaseTest {
     warehouse.archivedAt = ZonedDateTime.now();
 
     assertThrows(IllegalStateException.class, () -> archiveWarehouseUseCase.archive(warehouse));
-    verify(warehouseStore, never()).update(any());
+    verify(warehouseStore, never()).remove(any());
   }
 }
