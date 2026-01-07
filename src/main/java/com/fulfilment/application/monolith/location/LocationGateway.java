@@ -3,10 +3,11 @@ package com.fulfilment.application.monolith.location;
 import com.fulfilment.application.monolith.warehouses.domain.models.Location;
 import com.fulfilment.application.monolith.warehouses.domain.ports.LocationResolver;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.jboss.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class LocationGateway implements LocationResolver {
@@ -37,7 +38,6 @@ public class LocationGateway implements LocationResolver {
         return loc.get();
     }
     else {
-        // TODO: SHould I throw error in this case?
         LOGGER.warnf("Location NOT found for identifier: %s", identifier);
         return null;
     }

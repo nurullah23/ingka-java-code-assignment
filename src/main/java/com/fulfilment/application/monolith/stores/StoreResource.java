@@ -21,8 +21,9 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import java.util.List;
 import org.jboss.logging.Logger;
+
+import java.util.List;
 
 @Path("stores")
 @ApplicationScoped
@@ -37,14 +38,17 @@ public class StoreResource {
 
   @GET
   public List<Store> get() {
+    LOGGER.info("Listing all stores");
     return Store.listAll(Sort.by("name"));
   }
 
   @GET
   @Path("{id}")
   public Store getSingle(Long id) {
+    LOGGER.infof("Getting store by ID: %d", id);
     Store entity = Store.findById(id);
     if (entity == null) {
+      LOGGER.warnf("Store not found with ID: %d", id);
       throw new WebApplicationException("Store with id of " + id + " does not exist.", 404);
     }
     return entity;
@@ -53,11 +57,14 @@ public class StoreResource {
   @POST
   @Transactional
   public Response create(Store store) {
+    LOGGER.info("Creating a new store");
     if (store.id != null) {
+      LOGGER.warn("Attempted to create store with pre-set ID");
       throw new WebApplicationException("Id was invalidly set on request.", 422);
     }
 
     store.persist();
+    LOGGER.infof("Store persisted with ID: %d", store.id);
 
     transactionSynchronizationRegistry.registerInterposedSynchronization(
         new Synchronization() {
@@ -67,6 +74,7 @@ public class StoreResource {
           @Override
           public void afterCompletion(int status) {
             if (status == Status.STATUS_COMMITTED) {
+              LOGGER.infof("Transaction committed, syncing store %d with legacy system", store.id);
               legacyStoreManagerGateway.createStoreOnLegacySystem(store);
             }
           }
@@ -79,13 +87,16 @@ public class StoreResource {
   @Path("{id}")
   @Transactional
   public Store update(Long id, Store updatedStore) {
+    LOGGER.infof("Updating store with ID: %d", id);
     if (updatedStore.name == null) {
+      LOGGER.warnf("Store Name not set in update request for ID: %d", id);
       throw new WebApplicationException("Store Name was not set on request.", 422);
     }
 
     Store entity = Store.findById(id);
 
     if (entity == null) {
+      LOGGER.warnf("Store not found for update with ID: %d", id);
       throw new WebApplicationException("Store with id of " + id + " does not exist.", 404);
     }
 
@@ -100,6 +111,7 @@ public class StoreResource {
           @Override
           public void afterCompletion(int status) {
             if (status == Status.STATUS_COMMITTED) {
+              LOGGER.infof("Transaction committed, syncing updated store %d with legacy system", id);
               legacyStoreManagerGateway.updateStoreOnLegacySystem(entity);
             }
           }
@@ -112,13 +124,16 @@ public class StoreResource {
   @Path("{id}")
   @Transactional
   public Store patch(Long id, Store updatedStore) {
+    LOGGER.infof("Patching store with ID: %d", id);
     if (updatedStore.name == null) {
+      LOGGER.warnf("Store Name not set in patch request for ID: %d", id);
       throw new WebApplicationException("Store Name was not set on request.", 422);
     }
 
     Store entity = Store.findById(id);
 
     if (entity == null) {
+      LOGGER.warnf("Store not found for patch with ID: %d", id);
       throw new WebApplicationException("Store with id of " + id + " does not exist.", 404);
     }
 
@@ -138,6 +153,7 @@ public class StoreResource {
           @Override
           public void afterCompletion(int status) {
             if (status == Status.STATUS_COMMITTED) {
+              LOGGER.infof("Transaction committed, syncing patched store %d with legacy system", id);
               legacyStoreManagerGateway.updateStoreOnLegacySystem(entity);
             }
           }
@@ -150,11 +166,14 @@ public class StoreResource {
   @Path("{id}")
   @Transactional
   public Response delete(Long id) {
+    LOGGER.infof("Deleting store with ID: %d", id);
     Store entity = Store.findById(id);
     if (entity == null) {
+      LOGGER.warnf("Store not found for deletion with ID: %d", id);
       throw new WebApplicationException("Store with id of " + id + " does not exist.", 404);
     }
     entity.delete();
+    LOGGER.infof("Store deleted with ID: %d", id);
     return Response.status(204).build();
   }
 

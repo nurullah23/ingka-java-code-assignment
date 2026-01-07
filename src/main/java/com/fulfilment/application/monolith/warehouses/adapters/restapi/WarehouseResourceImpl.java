@@ -7,11 +7,15 @@ import com.warehouse.api.WarehouseResource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
+import org.jboss.logging.Logger;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WarehouseResourceImpl implements WarehouseResource {
+
+  private static final Logger LOGGER = Logger.getLogger(WarehouseResourceImpl.class);
 
   @Inject WarehouseStore warehouseStore;
 
@@ -21,6 +25,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
 
   @Override
   public List<com.warehouse.api.beans.Warehouse> listAllWarehousesUnits() {
+    LOGGER.info("Listing all warehouse units");
     return warehouseStore.getAll().stream()
         .map(
             domainWarehouse -> {
@@ -38,6 +43,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
   @Override
   public com.warehouse.api.beans.Warehouse createANewWarehouseUnit(
       @NotNull com.warehouse.api.beans.Warehouse data) {
+    LOGGER.infof("Creating a new warehouse unit: %s", data.getId());
     com.fulfilment.application.monolith.warehouses.domain.models.Warehouse domainWarehouse =
         new com.fulfilment.application.monolith.warehouses.domain.models.Warehouse();
     domainWarehouse.businessUnitCode = data.getId();
@@ -52,9 +58,11 @@ public class WarehouseResourceImpl implements WarehouseResource {
 
   @Override
   public com.warehouse.api.beans.Warehouse getAWarehouseUnitByID(String id) {
+    LOGGER.infof("Getting warehouse unit by ID: %s", id);
     com.fulfilment.application.monolith.warehouses.domain.models.Warehouse domainWarehouse =
         warehouseStore.findByBusinessUnitCode(id);
     if (domainWarehouse == null) {
+      LOGGER.warnf("Warehouse unit not found: %s", id);
       return null;
     }
     com.warehouse.api.beans.Warehouse apiWarehouse = new com.warehouse.api.beans.Warehouse();
@@ -67,10 +75,13 @@ public class WarehouseResourceImpl implements WarehouseResource {
 
   @Override
   public void archiveAWarehouseUnitByID(String id) {
+    LOGGER.infof("Archiving warehouse unit by ID: %s", id);
     com.fulfilment.application.monolith.warehouses.domain.models.Warehouse domainWarehouse =
         warehouseStore.findByBusinessUnitCode(id);
     if (domainWarehouse != null) {
       archiveWarehouseOperation.archive(domainWarehouse);
+    } else {
+      LOGGER.warnf("Warehouse unit not found for archiving: %s", id);
     }
   }
 }
