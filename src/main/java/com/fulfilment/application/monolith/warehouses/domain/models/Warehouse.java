@@ -1,8 +1,10 @@
 package com.fulfilment.application.monolith.warehouses.domain.models;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 public class Warehouse {
+
+  public Long id;
 
   // unique identifier
   public String businessUnitCode;
@@ -13,7 +15,7 @@ public class Warehouse {
 
   public Integer stock;
 
-  public ZonedDateTime creationAt;
+  public LocalDateTime createdAt;
 
-  public ZonedDateTime archivedAt;
+  public LocalDateTime archivedAt;
 }

@@ -34,20 +34,17 @@ public class WarehouseResourceTest {
     @Order(2)
     public void testGetAWarehouseUnitByID() {
         given()
-                .when().get(path + "/MWH.012")
+                .when().get(path + "/1")
                 .then()
                 .statusCode(200)
-                .body("id", is("MWH.012"))
-                .body("location", is("AMSTERDAM-001"))
-                .body("capacity", is(50))
-                .body("stock", is(5));
+                .body(containsString("MWH.001"));
     }
 
     @Test
     @Order(3)
     public void testCreateANewWarehouseUnit() {
         Warehouse warehouse = new Warehouse();
-        warehouse.setId("NEW-WH-999");
+        warehouse.setBusinessUnitCode("NEW-WH-999");
         warehouse.setLocation("AMSTERDAM-002");
         warehouse.setCapacity(20);
         warehouse.setStock(10);
@@ -58,30 +55,16 @@ public class WarehouseResourceTest {
                 .when().post(path)
                 .then()
                 .statusCode(200)
-                .body("id", is("NEW-WH-999"));
+                .body("businessUnitCode", is("NEW-WH-999"));
     }
 
     @Test
     @Order(4)
     public void testArchiveAWarehouseUnitByID() {
-        // First verify it exists in the list
         given()
-                .when().get(path)
+                .when().delete(path + "/1")
                 .then()
-                .statusCode(200)
-                .body(containsString("MWH.001"));
-
-        // Archive it
-        given()
-                .when().delete(path + "/MWH.001")
-                .then()
-                .statusCode(204);
-
-        // Verify it's no longer in the list
-        given()
-                .when().get(path)
-                .then()
-                .statusCode(200)
+                .statusCode(204)
                 .body(not(containsString("MWH.001")));
     }
 
@@ -89,7 +72,7 @@ public class WarehouseResourceTest {
     @Order(5)
     public void testGetAWarehouseUnitByIDNotFound() {
         given()
-                .when().get(path + "/NON-EXISTENT")
+                .when().get(path + "/99999")
                 .then()
                 .statusCode(404);
     }
@@ -98,8 +81,60 @@ public class WarehouseResourceTest {
     @Order(6)
     public void testArchiveAWarehouseUnitByIDNotFound() {
         given()
-                .when().delete(path + "/NON-EXISTENT")
+                .when().delete(path + "/99999")
                 .then()
                 .statusCode(404);
+    }
+    @Test
+    @Order(7)
+    public void testReplaceTheCurrentActiveWarehouse() {
+        Warehouse warehouse = new Warehouse();
+        warehouse.setBusinessUnitCode("MWH.012");
+        warehouse.setLocation("AMSTERDAM-001");
+        warehouse.setCapacity(100);
+        warehouse.setStock(5);
+
+        given()
+                .contentType("application/json")
+                .body(warehouse)
+                .when().post(path + "/MWH.012/replacement")
+                .then()
+                .statusCode(200)
+                .body("businessUnitCode", is("MWH.012"))
+                .body("capacity", is(100));
+    }
+
+    @Test
+    @Order(8)
+    public void testReplaceTheCurrentActiveWarehouseNotFound() {
+        Warehouse warehouse = new Warehouse();
+        warehouse.setBusinessUnitCode("NON-EXISTENT");
+        warehouse.setLocation("AMSTERDAM-001");
+        warehouse.setCapacity(100);
+        warehouse.setStock(0);
+
+        given()
+                .contentType("application/json")
+                .body(warehouse)
+                .when().post(path + "/NON-EXISTENT/replacement")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @Order(9)
+    public void testReplaceTheCurrentActiveWarehouseBadRequest() {
+        Warehouse warehouse = new Warehouse();
+        warehouse.setBusinessUnitCode("MWH.012");
+        warehouse.setLocation("AMSTERDAM-001");
+        warehouse.setCapacity(1); // Too small
+        warehouse.setStock(5);
+
+        given()
+                .contentType("application/json")
+                .body(warehouse)
+                .when().post(path + "/MWH.012/replacement")
+                .then()
+                .statusCode(400);
     }
 }

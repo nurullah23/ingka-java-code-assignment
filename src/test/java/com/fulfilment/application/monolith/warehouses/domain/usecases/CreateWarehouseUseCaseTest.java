@@ -1,15 +1,19 @@
 package com.fulfilment.application.monolith.warehouses.domain.usecases;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
 import com.fulfilment.application.monolith.warehouses.domain.models.Location;
 import com.fulfilment.application.monolith.warehouses.domain.models.Warehouse;
 import com.fulfilment.application.monolith.warehouses.domain.ports.LocationResolver;
 import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStore;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CreateWarehouseUseCaseTest {
 
@@ -79,7 +83,7 @@ public class CreateWarehouseUseCaseTest {
 
     Warehouse archived = new Warehouse();
     archived.location = "LOC001";
-    archived.archivedAt = java.time.ZonedDateTime.now();
+    archived.archivedAt = LocalDateTime.now();
 
     when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(null);
     when(locationResolver.resolveByIdentifier("LOC001")).thenReturn(location);
@@ -105,7 +109,7 @@ public class CreateWarehouseUseCaseTest {
     Warehouse archived = new Warehouse();
     archived.location = "LOC001";
     archived.capacity = 200;
-    archived.archivedAt = java.time.ZonedDateTime.now();
+    archived.archivedAt = LocalDateTime.now();
 
     when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(null);
     when(locationResolver.resolveByIdentifier("LOC001")).thenReturn(location);

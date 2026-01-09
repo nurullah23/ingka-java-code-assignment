@@ -7,7 +7,8 @@ import com.fulfilment.application.monolith.warehouses.domain.ports.LocationResol
 import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStore;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
-import java.time.ZonedDateTime;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -66,7 +67,7 @@ public class CreateWarehouseUseCase implements CreateWarehouseOperation {
     }
 
     // if all went well, create the warehouse
-    warehouse.creationAt = ZonedDateTime.now();
+    warehouse.createdAt = LocalDateTime.now();
     warehouseStore.create(warehouse);
     LOGGER.infof("Warehouse created successfully: %s", warehouse.businessUnitCode);
   }

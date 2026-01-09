@@ -5,7 +5,7 @@ import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStor
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
@@ -38,7 +38,7 @@ public class ArchiveWarehouseUseCaseTest {
   public void testArchiveWarehouseAlreadyArchived() {
     Warehouse warehouse = new Warehouse();
     warehouse.businessUnitCode = "BU001";
-    warehouse.archivedAt = ZonedDateTime.now();
+    warehouse.archivedAt = LocalDateTime.now();
 
     assertThrows(IllegalStateException.class, () -> archiveWarehouseUseCase.archive(warehouse));
     verify(warehouseStore, never()).remove(any());
