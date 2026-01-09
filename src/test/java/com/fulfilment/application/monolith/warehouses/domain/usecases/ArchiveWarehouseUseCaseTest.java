@@ -43,4 +43,9 @@ public class ArchiveWarehouseUseCaseTest {
     assertThrows(IllegalStateException.class, () -> archiveWarehouseUseCase.archive(warehouse));
     verify(warehouseStore, never()).remove(any());
   }
+
+  @Test
+  public void testArchiveWarehouseNullInput() {
+    assertThrows(NullPointerException.class, () -> archiveWarehouseUseCase.archive(null));
+  }
 }

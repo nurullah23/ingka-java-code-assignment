@@ -27,6 +27,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
   public List<com.warehouse.api.beans.Warehouse> listAllWarehousesUnits() {
     LOGGER.info("Listing all warehouse units");
     return warehouseStore.getAll().stream()
+        .filter(domainWarehouse -> domainWarehouse.archivedAt == null)
         .map(
             domainWarehouse -> {
               com.warehouse.api.beans.Warehouse apiWarehouse =
@@ -63,7 +64,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
         warehouseStore.findByBusinessUnitCode(id);
     if (domainWarehouse == null) {
       LOGGER.warnf("Warehouse unit not found: %s", id);
-      return null;
+      throw new jakarta.ws.rs.WebApplicationException("Warehouse unit not found", 404);
     }
     com.warehouse.api.beans.Warehouse apiWarehouse = new com.warehouse.api.beans.Warehouse();
     apiWarehouse.setId(domainWarehouse.businessUnitCode);
@@ -82,6 +83,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
       archiveWarehouseOperation.archive(domainWarehouse);
     } else {
       LOGGER.warnf("Warehouse unit not found for archiving: %s", id);
+      throw new jakarta.ws.rs.WebApplicationException("Warehouse unit not found", 404);
     }
   }
 }

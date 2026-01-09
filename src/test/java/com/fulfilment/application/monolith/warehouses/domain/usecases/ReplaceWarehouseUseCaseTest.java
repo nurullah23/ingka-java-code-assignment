@@ -78,4 +78,27 @@ public class ReplaceWarehouseUseCaseTest {
 
     assertThrows(IllegalArgumentException.class, () -> replaceWarehouseUseCase.replace(newWarehouse));
   }
+
+  @Test
+  public void testReplaceWarehouseNullInput() {
+    assertThrows(NullPointerException.class, () -> replaceWarehouseUseCase.replace(null));
+  }
+
+  @Test
+  public void testReplaceWarehouseNewCapacityEqualsOldStock() {
+    Warehouse newWarehouse = new Warehouse();
+    newWarehouse.businessUnitCode = "BU001";
+    newWarehouse.capacity = 50;
+    newWarehouse.stock = 50;
+
+    Warehouse oldWarehouse = new Warehouse();
+    oldWarehouse.businessUnitCode = "BU001";
+    oldWarehouse.stock = 50;
+
+    when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(oldWarehouse);
+
+    replaceWarehouseUseCase.replace(newWarehouse);
+
+    verify(warehouseStore).update(newWarehouse);
+  }
 }

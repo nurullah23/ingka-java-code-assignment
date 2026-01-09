@@ -119,4 +119,52 @@ public class CreateWarehouseUseCaseTest {
 
     assertThrows(IllegalArgumentException.class, () -> createWarehouseUseCase.create(warehouse));
   }
+
+  @Test
+  public void testCreateWarehouseStockEqualsCapacity() {
+    Warehouse warehouse = new Warehouse();
+    warehouse.businessUnitCode = "BU001";
+    warehouse.location = "LOC001";
+    warehouse.capacity = 100;
+    warehouse.stock = 100;
+
+    Location location = new Location("LOC001", 5, 1000);
+
+    when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(null);
+    when(locationResolver.resolveByIdentifier("LOC001")).thenReturn(location);
+    when(warehouseStore.findByLocation("LOC001")).thenReturn(List.of());
+
+    createWarehouseUseCase.create(warehouse);
+
+    verify(warehouseStore).create(warehouse);
+  }
+
+  @Test
+  public void testCreateWarehouseNullInput() {
+    assertThrows(NullPointerException.class, () -> createWarehouseUseCase.create(null));
+  }
+
+  @Test
+  public void testCreateWarehouseMultipleExistingContributingToCapacity() {
+    Warehouse warehouse = new Warehouse();
+    warehouse.businessUnitCode = "BU003";
+    warehouse.location = "LOC001";
+    warehouse.capacity = 50;
+
+    Location location = new Location("LOC001", 5, 100);
+
+    Warehouse existing1 = new Warehouse();
+    existing1.capacity = 30;
+    existing1.archivedAt = null;
+
+    Warehouse existing2 = new Warehouse();
+    existing2.capacity = 30;
+    existing2.archivedAt = null;
+
+    when(warehouseStore.findByBusinessUnitCode("BU003")).thenReturn(null);
+    when(locationResolver.resolveByIdentifier("LOC001")).thenReturn(location);
+    when(warehouseStore.findByLocation("LOC001")).thenReturn(List.of(existing1, existing2));
+
+    assertThrows(IllegalStateException.class, () -> createWarehouseUseCase.create(warehouse));
+  }
 }

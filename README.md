@@ -72,6 +72,16 @@ java -jar ./target/quarkus-app/quarkus-run.jar
     Or measure total native memory consumption...
 
 
+## Running tests
+
+To run the tests and generate a code coverage report, execute:
+
+```sh
+./mvnw test
+```
+
+After the tests complete, you can find the coverage report at: `target/jacoco-report/index.html`.
+
 ## See the demo in your browser
 
 Navigate to:

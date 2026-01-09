@@ -5,15 +5,16 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
 @QuarkusIntegrationTest
 public class WarehouseEndpointIT {
 
+  private static final String path = "warehouse";
+
   @Test
   public void testSimpleListWarehouses() {
-
-    final String path = "warehouse";
 
     // List all, should have all 3 products the database has initially:
     given()
@@ -42,5 +43,33 @@ public class WarehouseEndpointIT {
                     not(containsString("ZWOLLE-001")),
                     containsString("AMSTERDAM-001"),
                     containsString("TILBURG-001"));
+  }
+
+  @Test
+  public void testGetAWarehouseUnitByID() {
+    given()
+            .when().get(path + "/MWH.012")
+            .then()
+            .statusCode(200)
+            .body("id", is("MWH.012"))
+            .body("location", is("AMSTERDAM-001"))
+            .body("capacity", is(50))
+            .body("stock", is(5));
+  }
+
+  @Test
+  public void testGetAWarehouseUnitByIDNotFound() {
+    given()
+            .when().get(path + "/NON-EXISTENT")
+            .then()
+            .statusCode(404);
+  }
+
+  @Test
+  public void testArchiveAWarehouseUnitByIDNotFound() {
+    given()
+            .when().delete(path + "/NON-EXISTENT")
+            .then()
+            .statusCode(404);
   }
 }
