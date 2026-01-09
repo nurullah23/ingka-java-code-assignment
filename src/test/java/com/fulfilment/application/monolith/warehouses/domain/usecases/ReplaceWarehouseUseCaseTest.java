@@ -25,10 +25,32 @@ public class ReplaceWarehouseUseCaseTest {
     newWarehouse.businessUnitCode = "BU001";
     newWarehouse.capacity = 100;
     newWarehouse.stock = 50;
+    newWarehouse.location = "LOC001";
 
     Warehouse oldWarehouse = new Warehouse();
     oldWarehouse.businessUnitCode = "BU001";
     oldWarehouse.stock = 50;
+    oldWarehouse.location = "LOC001";
+
+    when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(oldWarehouse);
+
+    replaceWarehouseUseCase.replace(newWarehouse);
+
+    verify(warehouseStore).update(newWarehouse);
+  }
+
+  @Test
+  public void testReplaceWarehouseSuccessCapacityEqualsStock() {
+    Warehouse newWarehouse = new Warehouse();
+    newWarehouse.businessUnitCode = "BU001";
+    newWarehouse.capacity = 50;
+    newWarehouse.stock = 50;
+    newWarehouse.location = "LOC001";
+
+    Warehouse oldWarehouse = new Warehouse();
+    oldWarehouse.businessUnitCode = "BU001";
+    oldWarehouse.stock = 50;
+    oldWarehouse.location = "LOC001";
 
     when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(oldWarehouse);
 
@@ -84,21 +106,4 @@ public class ReplaceWarehouseUseCaseTest {
     assertThrows(NullPointerException.class, () -> replaceWarehouseUseCase.replace(null));
   }
 
-  @Test
-  public void testReplaceWarehouseNewCapacityEqualsOldStock() {
-    Warehouse newWarehouse = new Warehouse();
-    newWarehouse.businessUnitCode = "BU001";
-    newWarehouse.capacity = 50;
-    newWarehouse.stock = 50;
-
-    Warehouse oldWarehouse = new Warehouse();
-    oldWarehouse.businessUnitCode = "BU001";
-    oldWarehouse.stock = 50;
-
-    when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(oldWarehouse);
-
-    replaceWarehouseUseCase.replace(newWarehouse);
-
-    verify(warehouseStore).update(newWarehouse);
-  }
 }

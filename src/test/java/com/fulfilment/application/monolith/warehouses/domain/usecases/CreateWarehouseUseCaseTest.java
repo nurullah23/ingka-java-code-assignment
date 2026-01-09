@@ -75,10 +75,15 @@ public class CreateWarehouseUseCaseTest {
 
     Warehouse existing = new Warehouse();
     existing.location = "LOC001";
+    existing.archivedAt = null;
+
+    Warehouse archived = new Warehouse();
+    archived.location = "LOC001";
+    archived.archivedAt = java.time.ZonedDateTime.now();
 
     when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(null);
     when(locationResolver.resolveByIdentifier("LOC001")).thenReturn(location);
-    when(warehouseStore.findByLocation("LOC001")).thenReturn(List.of(existing));
+    when(warehouseStore.findByLocation("LOC001")).thenReturn(List.of(existing, archived));
 
     assertThrows(IllegalStateException.class, () -> createWarehouseUseCase.create(warehouse));
   }
@@ -95,10 +100,16 @@ public class CreateWarehouseUseCaseTest {
     Warehouse existing = new Warehouse();
     existing.location = "LOC001";
     existing.capacity = 150;
+    existing.archivedAt = null;
+
+    Warehouse archived = new Warehouse();
+    archived.location = "LOC001";
+    archived.capacity = 200;
+    archived.archivedAt = java.time.ZonedDateTime.now();
 
     when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(null);
     when(locationResolver.resolveByIdentifier("LOC001")).thenReturn(location);
-    when(warehouseStore.findByLocation("LOC001")).thenReturn(List.of(existing));
+    when(warehouseStore.findByLocation("LOC001")).thenReturn(List.of(existing, archived));
 
     assertThrows(IllegalStateException.class, () -> createWarehouseUseCase.create(warehouse));
   }

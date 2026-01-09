@@ -1,8 +1,10 @@
 package com.fulfilment.application.monolith.products;
 
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.math.BigDecimal;
 
@@ -12,9 +14,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 @QuarkusTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ProductEndpointTest {
 
   @Test
+  @Order(1)
   public void testGetAllProducts() {
     final String path = "product";
 
@@ -24,21 +28,7 @@ public class ProductEndpointTest {
         .get(path)
         .then()
         .statusCode(200)
-        .body(containsString("TONSTAD"),
-                containsString("KALLAX"),
-                containsString("BESTÅ"));
-
-    // Delete the BESTÅ:
-    given().when().delete(path + "/3").then().statusCode(204);
-
-    given()
-            .when()
-            .get(path)
-            .then()
-            .statusCode(200)
-            .body(containsString("TONSTAD"),
-                    containsString("KALLAX"),
-                    not(containsString("BESTÅ")));
+        .body(containsString("TONSTAD"), containsString("KALLAX"), containsString("BESTÅ"));
   }
 
   @Test
@@ -72,6 +62,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(4)
   public void testUpdateProduct() {
     Product product = new Product();
     product.name = "KALLAX UPDATED";
@@ -90,6 +81,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(5)
   public void testDeleteProduct() {
     final String path = "product";
 
@@ -106,6 +98,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(6)
   public void testGetProductNotFound() {
     given()
             .when().get("/product/9999")
@@ -114,6 +107,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(7)
   public void testCreateProductWithId() {
     Product product = new Product();
     product.id = 1L;
@@ -128,6 +122,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(8)
   public void testUpdateProductNotFound() {
     Product product = new Product();
     product.name = "Non-existent Product";
@@ -141,6 +136,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(9)
   public void testUpdateProductMissingName() {
     Product product = new Product();
     // name is null
@@ -154,6 +150,7 @@ public class ProductEndpointTest {
   }
 
   @Test
+  @Order(10)
   public void testDeleteProductNotFound() {
     given()
             .when().delete("/product/9999")

@@ -6,17 +6,20 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Status;
 import jakarta.transaction.TransactionSynchronizationRegistry;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @QuarkusTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StoreResourceTest {
 
     @InjectMock
@@ -26,30 +29,17 @@ public class StoreResourceTest {
     TransactionSynchronizationRegistry transactionSynchronizationRegistry;
 
     @Test
-    public void testGetAllStoresAndDeleteSuccess() {
+    @Order(1)
+    public void testGetAllStores() {
         given()
                 .when().get("/stores")
                 .then()
                 .statusCode(200)
-                .body(containsString("HAARLEM"),
-                        containsString("AMSTERDAM"),
-                        containsString("HENGELO"));
-
-        given()
-                .when().delete("/stores/3")
-                .then()
-                .statusCode(204);
-
-        given()
-                .when().get("/stores")
-                .then()
-                .statusCode(200)
-                .body(containsString("HAARLEM"),
-                        containsString("AMSTERDAM"),
-                        not(containsString("HENGELO")));
+                .body(containsString("HAARLEM"), containsString("AMSTERDAM"), containsString("HENGELO"));
     }
 
     @Test
+    @Order(2)
     public void testGetSingleStore() {
         given()
                 .when().get("/stores/1")
@@ -60,6 +50,7 @@ public class StoreResourceTest {
     }
 
     @Test
+    @Order(3)
     public void testUpdateStoreSuccess() {
         Store updatedStore = new Store();
         updatedStore.name = "HAARLEM UPDATED";
@@ -78,6 +69,7 @@ public class StoreResourceTest {
     }
 
     @Test
+    @Order(4)
     public void testPatchStoreSuccess() {
         Store patchStore = new Store();
         patchStore.name = "HAARLEM PATCHED";
@@ -96,6 +88,21 @@ public class StoreResourceTest {
     }
 
     @Test
+    @Order(5)
+    public void testDeleteStoreSuccess() {
+        given()
+                .when().delete("/stores/3")
+                .then()
+                .statusCode(204);
+
+        given()
+                .when().get("/stores/3")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @Order(6)
     public void testCreateStoreCallsLegacySystemAfterCommit() {
         Store store = new Store();
         store.name = "Test Store";
