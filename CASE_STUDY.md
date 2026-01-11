@@ -7,7 +7,7 @@
 
 **Questions you may have and considerations:**
 
-```One of the biggest challenge would be to making sure that every cost is actually attributed to the right warehouse or store, especially when resources are shared. I’d want to know how granular we need to be. Are we tracking costs at the pallet level or just at the facility level? In my experience, if the data entry is manual at the warehouse floor, it’s bound to have human errors. I'd consider automating some data capture using IoT or RFID to ensure the numbers we're seeing in the dashboard actually reflect reality. ```
+```One of the biggest challenge would be to make sure that every cost is actually attributed to the right warehouse or store, especially when resources are shared. I’d want to know how granular we need to be. Are we tracking costs at the pallet level or just at the facility level? In my experience, if the data entry is manual at the warehouse floor, it’s bound to have human error. I'd consider automating some data capture using IoT or RFID to ensure the numbers we're seeing in the dashboard actually reflect reality. ```
 
 ## Scenario 2: Cost Optimization Strategies
 
