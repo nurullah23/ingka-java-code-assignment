@@ -5,7 +5,9 @@
 
 **Task**: Discuss the challenges in accurately tracking and allocating costs in a fulfillment environment. Think about what are important considerations for this, what are previous experiences that you have you could related to this problem and elaborate some questions and considerations
 
-**Questions you may have and considerations:** [ fill here your answer ]
+**Questions you may have and considerations:**
+
+```One of the biggest challenge would be to making sure that every cost is actually attributed to the right warehouse or store, especially when resources are shared. I’d want to know how granular we need to be. Are we tracking costs at the pallet level or just at the facility level? In my experience, if the data entry is manual at the warehouse floor, it’s bound to have human errors. I'd consider automating some data capture using IoT or RFID to ensure the numbers we're seeing in the dashboard actually reflect reality. ```
 
 ## Scenario 2: Cost Optimization Strategies
 
@@ -14,7 +16,8 @@
 **Task**: Discuss potential cost optimization strategies for fulfillment operations and expected outcomes from that. How would you identify, prioritize and implement these strategies?
 
 **Questions you may have and considerations:**
-[ fill here your answer ]
+
+```I'd look at automation and smarter inventory placement first. If we can use data to predict where demand will be, we can stock warehouses closer to the customers and cut down on transportation costs. To prioritize, I’d use a simple Impact vs Effort matrix. Then, I would start with optimizing warehouse layout to reduce travel time for pickers. ```
 
 ## Scenario 3: Integration with Financial Systems
 
@@ -23,7 +26,8 @@
 **Task**: Discuss the importance of integrating the Cost Control Tool with financial systems. What benefits the company would have from that and how would you ensure seamless integration and data synchronization?
 
 **Questions you may have and considerations:**
-[ fill here your answer ]
+
+```Integration is key to eliminate manual exports and stale data. The biggest benefits are speed and accuracy. You can make a decision with correct costs instantly. For the technical side, I’d prefer an API-first and event-driven approach to keep things in sync. But it's also important to decide clear ownership of data to avoidtwo different systems showinig two different values. ```
 
 ## Scenario 4: Budgeting and Forecasting
 
@@ -32,7 +36,8 @@
 **Task**: Discuss the importance of budgeting and forecasting in fulfillment operations and what would you take into account designing a system to support accurate budgeting and forecasting?
 
 **Questions you may have and considerations:**
-[ fill here your answer ]
+
+```Forecasting is all about handling seasonality and growth. Times like Black Friday or a new product launch is important to guess the budget. When designing this, I'd check historical trends but also allow for possible scenarios like fuel prices updates. I’d focus on making the system flexible enough to adjust these variables easily rather than building a rigid model that breaks the moment reality changes. ```
 
 ## Scenario 5: Cost Control in Warehouse Replacement
 
@@ -41,7 +46,8 @@
 **Task**: Discuss the cost control aspects of replacing a Warehouse. Why is it important to preserve cost history and how this relates to keeping the new Warehouse operation within budget?
 
 **Questions you may have and considerations:**
-[ fill here your answer ]
+
+```Preserving history is vital because the "Business Unit Code" is the thread that connects the old and the new. If we lose the history, we lose our baseline. How do we know if the new warehouse is actually more efficient if we can't compare it to the old one? From a cost control perspective, I’d track the transition costs separately so they don't affect the operational budget of the new facility. That way we could make sure the replacement is actually a step forward rather than just a fresh start with the same old inefficiencies. ```
 
 ## Instructions for Candidates
 

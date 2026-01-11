@@ -19,3 +19,12 @@ Both approaches have their place, but they definitely feel different. Coding dir
 Generating code from an OpenAPI spec, as in Warehouse, is much better for a professional setup. It forces a Design-First approach where you agree on the API contract before you start building. It makes it easier for external parties consuming the API because they have a clear spec to work with.
 Personally, I'd go with the Design-First approach for the whole project. It's more robust, keeps the docs in sync, and provides a better developer/consumer experience overall.
 ```
+----
+3. Given the need to balance thorough testing with time and resource constraints, how would you prioritize and implement tests for this project? Which types of tests would you focus on, and how would you ensure test coverage remains effective over time?
+
+**Answer:**
+```txt
+I prioritize testing by focusing first on the core business logic—the use cases. In this project, I ensured that the `warehouses.domain.usecases` package reached 100% coverage, as that's where the most critical validation and rules live. These unit tests are fast and provide immediate feedback.
+Next, I focus on integration tests (like `WarehouseResourceTest`) to ensure the REST API and database layers are wired correctly. This multi-layered approach gives me confidence without needing to test every single trivial detail.
+To keep coverage effective over time, I’d integrate tools like JaCoCo into the CI pipeline to monitor coverage trends. I also believe in writing "reproduction tests" for any bugs found, ensuring they don't regress as the codebase evolves.
+```
