@@ -35,8 +35,9 @@ public class ReplaceWarehouseUseCaseTest {
     when(warehouseStore.findByBusinessUnitCode("BU001")).thenReturn(oldWarehouse);
 
     replaceWarehouseUseCase.replace(newWarehouse);
-
-    verify(warehouseStore).update(newWarehouse);
+    
+    verify(warehouseStore).remove(oldWarehouse);
+    verify(warehouseStore).create(newWarehouse);
   }
 
   @Test
@@ -56,7 +57,8 @@ public class ReplaceWarehouseUseCaseTest {
 
     replaceWarehouseUseCase.replace(newWarehouse);
 
-    verify(warehouseStore).update(newWarehouse);
+    verify(warehouseStore).remove(oldWarehouse);
+    verify(warehouseStore).create(newWarehouse);
   }
 
   @Test

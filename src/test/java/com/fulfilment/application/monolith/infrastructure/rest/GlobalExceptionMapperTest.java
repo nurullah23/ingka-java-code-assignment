@@ -38,7 +38,7 @@ public class GlobalExceptionMapperTest {
     @Test
     public void testIllegalArgumentException() {
         // Warehouse with existing code should throw IllegalArgumentException, mapped to 400
-        String warehouseData = "{\"id\": \"MW001\", \"location\": \"AMSTERDAM-001\", \"capacity\": 50, \"stock\": 10}";
+        String warehouseData = "{\"businessUnitCode\": \"MW001\", \"location\": \"AMSTERDAM-001\", \"capacity\": 50, \"stock\": 10}";
         
         // First creation
         given()

@@ -33,35 +33,32 @@ public class WarehouseResourceImpl implements WarehouseResource {
 
   @Override
   public Warehouse createANewWarehouseUnit(@NotNull Warehouse data) {
-    LOGGER.infof("Creating a new warehouse unit: %s", data.getId());
+    LOGGER.infof("Creating a new warehouse unit: %s", data.getBusinessUnitCode());
     com.fulfilment.application.monolith.warehouses.domain.models.Warehouse warehouse =
         new com.fulfilment.application.monolith.warehouses.domain.models.Warehouse();
-    warehouse.businessUnitCode = data.getId();
+    warehouse.businessUnitCode = data.getBusinessUnitCode();
     warehouse.location = data.getLocation();
     warehouse.capacity = data.getCapacity();
     warehouse.stock = data.getStock();
 
     createWarehouseOperation.create(warehouse);
 
-    return data;
+    var response = this.warehouseRepository.findByBusinessUnitCode(warehouse.businessUnitCode);
+
+    return response != null ? this.toWarehouseResponse(response) : null;
   }
 
   @Override
   public Warehouse getAWarehouseUnitByID(String id) {
     LOGGER.infof("Getting warehouse unit by ID: %s", id);
-    com.fulfilment.application.monolith.warehouses.domain.models.Warehouse domainWarehouse =
+    com.fulfilment.application.monolith.warehouses.domain.models.Warehouse warehouse =
             warehouseRepository.findByInternalId(Long.parseLong(id));
-    if (domainWarehouse == null) {
+    if (warehouse == null) {
       LOGGER.warnf("Warehouse unit not found: %s", id);
       throw new jakarta.ws.rs.WebApplicationException("Warehouse unit not found", 404);
     }
-    Warehouse apiWarehouse = new Warehouse();
-    apiWarehouse.setId(id);
-    apiWarehouse.setBusinessUnitCode(domainWarehouse.businessUnitCode);
-    apiWarehouse.setLocation(domainWarehouse.location);
-    apiWarehouse.setCapacity(domainWarehouse.capacity);
-    apiWarehouse.setStock(domainWarehouse.stock);
-    return apiWarehouse;
+
+    return this.toWarehouseResponse(warehouse);
   }
 
   @Override
@@ -97,7 +94,9 @@ public class WarehouseResourceImpl implements WarehouseResource {
       throw new jakarta.ws.rs.WebApplicationException(e.getMessage(), 400);
     }
 
-    return data;
+    var response = this.warehouseRepository.findByBusinessUnitCode(warehouse.businessUnitCode);
+
+    return response != null ? this.toWarehouseResponse(response) : null;
   }
 
   private Warehouse toWarehouseResponse(

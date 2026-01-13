@@ -61,7 +61,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   public Warehouse findByBusinessUnitCode(String buCode) {
     LOGGER.debugf("Finding warehouse by business unit code: %s", buCode);
-    return find("businessUnitCode", buCode).stream().map(this::fromDb).findFirst().orElse(null);
+    return find("businessUnitCode = ?1 and archivedAt is null", buCode).firstResultOptional().map(this::fromDb).orElse(null);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   public List<Warehouse> getAll() {
     LOGGER.debug("Getting all warehouses from database");
-    return listAll().stream().map(this::fromDb).collect(Collectors.toList());
+    return list("archivedAt is null").stream().map(this::fromDb).collect(Collectors.toList());
   }
 
   private DbWarehouse toDb(Warehouse warehouse) {

@@ -38,7 +38,8 @@ public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
       throw new IllegalArgumentException("Stock of new warehouse must match old stock");
     }
 
-    warehouseStore.update(newWarehouse);
+    warehouseStore.remove(oldWarehouse);
+    warehouseStore.create(newWarehouse);
     LOGGER.infof("Warehouse replaced successfully: %s", newWarehouse.businessUnitCode);
   }
 }
