@@ -1,6 +1,7 @@
 package com.fulfilment.application.monolith.stores;
 
 import io.quarkus.test.InjectMock;
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Status;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @QuarkusTest
+@TestTransaction
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StoreResourceTest {
 

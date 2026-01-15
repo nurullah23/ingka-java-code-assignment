@@ -20,6 +20,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   public void create(Warehouse warehouse) {
     LOGGER.infof("Creating warehouse unit in database: %s", warehouse.businessUnitCode);
+    warehouse.createdAt = LocalDateTime.now();
     persist(toDb(warehouse));
   }
 
@@ -67,7 +68,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   public List<Warehouse> findByLocation(String locationIdentifier) {
     LOGGER.debugf("Finding warehouses by location: %s", locationIdentifier);
-    return find("location", locationIdentifier).stream().map(this::fromDb).collect(Collectors.toList());
+    return find("location = ?1 and archivedAt is null", locationIdentifier).stream().map(this::fromDb).collect(Collectors.toList());
   }
 
   @Override

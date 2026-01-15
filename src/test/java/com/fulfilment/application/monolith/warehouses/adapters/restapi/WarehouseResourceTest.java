@@ -1,6 +1,7 @@
 package com.fulfilment.application.monolith.warehouses.adapters.restapi;
 
 import com.warehouse.api.beans.Warehouse;
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -13,6 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.not;
 
 @QuarkusTest
+@TestTransaction
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WarehouseResourceTest {
 
@@ -89,9 +91,9 @@ public class WarehouseResourceTest {
     @Order(7)
     public void testReplaceTheCurrentActiveWarehouse() {
         Warehouse warehouse = new Warehouse();
-        warehouse.setBusinessUnitCode("MWH.012");
-        warehouse.setLocation("AMSTERDAM-001");
-        warehouse.setCapacity(100);
+        warehouse.setBusinessUnitCode("NEW-WH-999");
+        warehouse.setLocation("AMSTERDAM-002");
+        warehouse.setCapacity(50);
         warehouse.setStock(5);
 
         given()
@@ -101,7 +103,7 @@ public class WarehouseResourceTest {
                 .then()
                 .statusCode(200)
                 .body("businessUnitCode", is("MWH.012"))
-                .body("capacity", is(100));
+                .body("capacity", is(50));
     }
 
     @Test

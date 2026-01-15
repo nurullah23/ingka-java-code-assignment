@@ -12,18 +12,17 @@ public class ArchiveWarehouseUseCase implements ArchiveWarehouseOperation {
   private static final Logger LOGGER = Logger.getLogger(ArchiveWarehouseUseCase.class);
 
   private final WarehouseStore warehouseStore;
+  private final WarehouseValidator warehouseValidator;
 
-  public ArchiveWarehouseUseCase(WarehouseStore warehouseStore) {
+  public ArchiveWarehouseUseCase(WarehouseStore warehouseStore, WarehouseValidator warehouseValidator) {
     this.warehouseStore = warehouseStore;
+    this.warehouseValidator = warehouseValidator;
   }
 
   @Override
   public void archive(Warehouse warehouse) {
     LOGGER.infof("Archiving warehouse: %s", warehouse.businessUnitCode);
-    if (warehouse.archivedAt != null) {
-      LOGGER.warnf("Warehouse already archived: %s", warehouse.businessUnitCode);
-      throw new IllegalStateException("Warehouse is already archived");
-    }
+    warehouseValidator.validateNotArchived(warehouse);
     warehouseStore.remove(warehouse);
   }
 }

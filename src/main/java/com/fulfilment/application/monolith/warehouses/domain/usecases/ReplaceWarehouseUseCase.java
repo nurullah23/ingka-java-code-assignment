@@ -12,9 +12,11 @@ public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
   private static final Logger LOGGER = Logger.getLogger(ReplaceWarehouseUseCase.class);
 
   private final WarehouseStore warehouseStore;
+  private final WarehouseValidator warehouseValidator;
 
-  public ReplaceWarehouseUseCase(WarehouseStore warehouseStore) {
+  public ReplaceWarehouseUseCase(WarehouseStore warehouseStore, WarehouseValidator warehouseValidator) {
     this.warehouseStore = warehouseStore;
+    this.warehouseValidator = warehouseValidator;
   }
 
   @Override
@@ -26,17 +28,7 @@ public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
       throw new IllegalArgumentException("Warehouse to replace not found");
     }
 
-    // Capacity Accommodation
-    if (newWarehouse.capacity < oldWarehouse.stock) {
-      LOGGER.warnf("New capacity cannot accommodate old stock for warehouse: %s", newWarehouse.businessUnitCode);
-      throw new IllegalArgumentException("New capacity cannot accommodate old stock");
-    }
-
-    // Stock Matching
-    if (!newWarehouse.stock.equals(oldWarehouse.stock)) {
-      LOGGER.warnf("Stock of new warehouse does not match old stock for warehouse: %s", newWarehouse.businessUnitCode);
-      throw new IllegalArgumentException("Stock of new warehouse must match old stock");
-    }
+    warehouseValidator.validate(newWarehouse, oldWarehouse);
 
     warehouseStore.remove(oldWarehouse);
     warehouseStore.create(newWarehouse);

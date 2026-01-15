@@ -1,5 +1,6 @@
 package com.fulfilment.application.monolith.products;
 
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -14,6 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 @QuarkusTest
+@TestTransaction
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ProductEndpointTest {
 
