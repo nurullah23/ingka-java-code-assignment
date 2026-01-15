@@ -71,6 +71,18 @@
             <version>2.4.7</version>
         </dependency>
 
+        <!-- Observability: Health -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+
+        <!-- Observability: Metrics -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -80,9 +92,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <!-- the parameters=true option is critical so that RESTEasy works fine -->
                     <parameters>true</parameters>
                 </configuration>
             </plugin>
