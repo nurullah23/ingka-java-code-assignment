@@ -36,8 +36,28 @@ This document outlines the observability and scalability features implemented to
     *   Hibernate generation set to `none` in production to prevent accidental schema changes.
     *   SQL logging disabled in production for performance.
 
+#### CI/CD Pipeline
+
+A GitHub Actions workflow has been implemented in `.github/workflows/cd.yml`.
+
+1.  **Build Stage**:
+    *   Compiles the application using JDK 17.
+    *   Runs all tests (unit and integration).
+    *   Packages the application into a Quarkus app.
+    *   Uploads the `target/quarkus-app/` as an artifact.
+
+2.  **Docker Stage** (Main branch only):
+    *   Downloads the build artifact.
+    *   Builds a Docker image using `src/main/docker/Dockerfile.jvm`.
+    *   Pushes the image to GitHub Container Registry (GHCR).
+    *   Tags: `latest` and `SHA`.
+
+3.  **Deployment Stage** (Main branch only):
+    *   Currently a placeholder. To enable actual deployment, target environment details and credentials need to be provided.
+
 #### Next Steps for Production
 
+*   **Deployment Configuration**: Provide details for the target environment (e.g., Kubeconfig for K8s, API keys for Cloud providers) to complete the CD pipeline.
 *   **Distributed Tracing**: Integrate with OpenTelemetry for end-to-end request tracing.
 *   **Alerting**: Set up Prometheus/Grafana alerts based on the `/metrics` endpoint.
 *   **Centralized Logging**: Stream JSON logs to an ELK or EFK stack.
