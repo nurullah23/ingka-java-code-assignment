@@ -21,6 +21,12 @@ This document outlines the observability and scalability features implemented to
     *   Standardized console log format for non-production environments.
     *   Level set to `INFO` by default.
 
+3.  **Distributed Tracing**:
+    *   Integrated with OpenTelemetry.
+    *   Service Name: `warehouse-monolith`
+    *   Propagates trace context across requests.
+    *   Implemented using `quarkus-opentelemetry`.
+
 #### Scalability
 
 1.  **Database Connection Pooling**:
@@ -58,6 +64,5 @@ A GitHub Actions workflow has been implemented in `.github/workflows/cd.yml`.
 #### Next Steps for Production
 
 *   **Deployment Configuration**: Provide details for the target environment (e.g., Kubeconfig for K8s, API keys for Cloud providers) to complete the CD pipeline.
-*   **Distributed Tracing**: Integrate with OpenTelemetry for end-to-end request tracing.
 *   **Alerting**: Set up Prometheus/Grafana alerts based on the `/metrics` endpoint.
 *   **Centralized Logging**: Stream JSON logs to an ELK or EFK stack.
