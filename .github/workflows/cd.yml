@@ -107,3 +107,5 @@ jobs:
           QUARKUS_DATASOURCE_JDBC_URL=${{ secrets.DB_URL }}
           QUARKUS_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
           QUARKUS_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
+        # If using Cloud SQL, you MUST add the instance connection name here:
+        flags: --add-cloudsql-instances=${{ vars.CLOUD_SQL_INSTANCE }}

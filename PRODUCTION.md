@@ -49,27 +49,40 @@ The recommended way to deploy this application to GCP is using **Google Cloud Ru
 ##### 1. Infrastructure Setup
 
 *   **Cloud SQL (PostgreSQL)**: Create a PostgreSQL instance. Ensure it's in the same region as your Cloud Run service for better performance.
+    *   **Connection Name**: Note down the "Connection name" from the Cloud SQL instance overview (e.g., `project:region:instance`).
 *   **Artifact Registry**: Create a Docker repository in Artifact Registry to store your images.
 *   **Service Account**: Create a Service Account for GitHub Actions with the following roles:
     *   `roles/run.admin` (Cloud Run Admin)
     *   `roles/iam.serviceAccountUser` (Service Account User)
     *   `roles/artifactregistry.writer` (Artifact Registry Writer)
-    *   `roles/cloudsql.client` (Cloud SQL Client - if using direct connection)
+    *   `roles/cloudsql.client` (Cloud SQL Client) - **Mandatory** for connecting to Cloud SQL.
 
 ##### 2. GitHub Actions Configuration
 
 To enable the automated CD pipeline to GCP, set up the following:
 
 **GitHub Actions Secrets:**
-*   `GCP_SA_KEY`: The JSON key of your Service Account.
-*   `DB_URL`: The JDBC URL for your Cloud SQL instance (e.g., `jdbc:postgresql://<EXTERNAL_IP>:5432/quarkus_test`).
-*   `DB_USER`: Database username.
+
+Go to **Settings > Secrets and variables > Actions** in your GitHub repository and add the following **Repository secrets**:
+
+*   `GCP_SA_KEY`: The JSON key of your Service Account (copy the entire contents of the `.json` file).
+*   `DB_URL`: The JDBC URL for your Cloud SQL instance.
+    *   **Direct IP (Private or Public)**: `jdbc:postgresql://<DB_IP>:5432/<DB_NAME>`
+    *   **Cloud SQL Auth Proxy (Unix Socket)**: `jdbc:postgresql:///<DB_NAME>?host=/cloudsql/<INSTANCE_CONNECTION_NAME>`
+        *   *Note: Using Unix sockets is the recommended way for Cloud Run.*
+    *   **With Google Managed Internal CA**: If you have "Google managed internal certificate authority" enabled, the Cloud SQL Auth Proxy (used by Cloud Run) handles this automatically. You **do not** need to add SSL parameters to your JDBC URL when using the Unix socket approach.
+    *   **Direct SSL Connection (If not using Proxy)**: If you are connecting directly via IP and want to verify the CA:
+        *   `jdbc:postgresql://<DB_IP>:5432/<DB_NAME>?ssl=true&sslmode=verify-ca&sslrootcert=/path/to/server-ca.pem`
+*   `DB_USER`: Database username (e.g., `postgres`).
 *   `DB_PASSWORD`: Database password.
 
 **GitHub Actions Variables:**
+
+In the same section, go to the **Variables** tab and add the following **Repository variables**:
 *   `GCP_PROJECT_ID`: Your GCP Project ID.
 *   `GCP_REGION`: Target region (e.g., `europe-west1`).
 *   `GCP_AR_REPO`: The name of your Artifact Registry repository.
+*   `CLOUD_SQL_INSTANCE`: The full "Connection name" of your Cloud SQL instance (e.g., `my-project:europe-west1:my-instance`).
 
 ##### 3. Manual Deployment (Optional)
 
