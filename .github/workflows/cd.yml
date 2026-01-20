@@ -68,12 +68,42 @@ jobs:
           ghcr.io/${{ env.REPO_NAME }}:latest
           ghcr.io/${{ env.REPO_NAME }}:${{ github.sha }}
 
-  deploy:
+  deploy-gcp:
     needs: docker-build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to Environment
+    - uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker for GCP
+      run: gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+    - name: Tag and Push to Artifact Registry
       run: |
-        echo "Ready for deployment."
-        echo "To enable actual deployment, please provide target environment details (e.g., K8s, AWS, Heroku)."
+        IMAGE_NAME="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPO }}/warehouse-monolith"
+        # We use the env variable set in the previous job
+        REPO_NAME_LC=${GITHUB_REPOSITORY,,}
+        docker pull ghcr.io/${REPO_NAME_LC}:latest
+        docker tag ghcr.io/${REPO_NAME_LC}:latest $IMAGE_NAME:${{ github.sha }}
+        docker tag ghcr.io/${REPO_NAME_LC}:latest $IMAGE_NAME:latest
+        docker push $IMAGE_NAME:${{ github.sha }}
+        docker push $IMAGE_NAME:latest
+
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: warehouse-monolith
+        image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPO }}/warehouse-monolith:latest
+        region: ${{ vars.GCP_REGION }}
+        env_vars: |
+          QUARKUS_DATASOURCE_JDBC_URL=${{ secrets.DB_URL }}
+          QUARKUS_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
+          QUARKUS_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}

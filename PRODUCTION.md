@@ -42,6 +42,55 @@ This document outlines the observability and scalability features implemented to
     *   Hibernate generation set to `none` in production to prevent accidental schema changes.
     *   SQL logging disabled in production for performance.
 
+#### Deployment to Google Cloud Platform (GCP)
+
+The recommended way to deploy this application to GCP is using **Google Cloud Run** for the application layer and **Cloud SQL** for the database.
+
+##### 1. Infrastructure Setup
+
+*   **Cloud SQL (PostgreSQL)**: Create a PostgreSQL instance. Ensure it's in the same region as your Cloud Run service for better performance.
+*   **Artifact Registry**: Create a Docker repository in Artifact Registry to store your images.
+*   **Service Account**: Create a Service Account for GitHub Actions with the following roles:
+    *   `roles/run.admin` (Cloud Run Admin)
+    *   `roles/iam.serviceAccountUser` (Service Account User)
+    *   `roles/artifactregistry.writer` (Artifact Registry Writer)
+    *   `roles/cloudsql.client` (Cloud SQL Client - if using direct connection)
+
+##### 2. GitHub Actions Configuration
+
+To enable the automated CD pipeline to GCP, set up the following:
+
+**GitHub Actions Secrets:**
+*   `GCP_SA_KEY`: The JSON key of your Service Account.
+*   `DB_URL`: The JDBC URL for your Cloud SQL instance (e.g., `jdbc:postgresql://<EXTERNAL_IP>:5432/quarkus_test`).
+*   `DB_USER`: Database username.
+*   `DB_PASSWORD`: Database password.
+
+**GitHub Actions Variables:**
+*   `GCP_PROJECT_ID`: Your GCP Project ID.
+*   `GCP_REGION`: Target region (e.g., `europe-west1`).
+*   `GCP_AR_REPO`: The name of your Artifact Registry repository.
+
+##### 3. Manual Deployment (Optional)
+
+If you prefer to deploy manually:
+
+```bash
+# Build the application
+./mvnw package
+
+# Build and push the image to Artifact Registry
+gcloud builds submit --tag gcr.io/[PROJECT_ID]/warehouse-monolith .
+
+# Deploy to Cloud Run
+gcloud run deploy warehouse-monolith \
+  --image gcr.io/[PROJECT_ID]/warehouse-monolith \
+  --platform managed \
+  --region [REGION] \
+  --set-env-vars="QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://[DB_IP]:5432/[DB_NAME],QUARKUS_DATASOURCE_USERNAME=[USER],QUARKUS_DATASOURCE_PASSWORD=[PASSWORD]" \
+  --allow-unauthenticated
+```
+
 #### CI/CD Pipeline
 
 A GitHub Actions workflow has been implemented in `.github/workflows/cd.yml`.
@@ -59,10 +108,11 @@ A GitHub Actions workflow has been implemented in `.github/workflows/cd.yml`.
     *   Tags: `latest` and `SHA`.
 
 3.  **Deployment Stage** (Main branch only):
-    *   Currently a placeholder. To enable actual deployment, target environment details and credentials need to be provided.
+    *   Deploys to Google Cloud Run.
+    *   Requires GCP credentials and configuration (see Deployment to GCP section).
 
 #### Next Steps for Production
 
-*   **Deployment Configuration**: Provide details for the target environment (e.g., Kubeconfig for K8s, API keys for Cloud providers) to complete the CD pipeline.
+*   **Infrastructure Provisioning**: Use Terraform or similar Iac tool to provision GCP resources.
 *   **Alerting**: Set up Prometheus/Grafana alerts based on the `/metrics` endpoint.
 *   **Centralized Logging**: Stream JSON logs to an ELK or EFK stack.
