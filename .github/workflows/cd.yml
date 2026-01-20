@@ -103,9 +103,9 @@ jobs:
         service: warehouse-monolith
         image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPO }}/warehouse-monolith:latest
         region: ${{ vars.GCP_REGION }}
-        env_vars: |
-          QUARKUS_DATASOURCE_JDBC_URL=${{ secrets.DB_URL }}
-          QUARKUS_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
-          QUARKUS_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
+        env_vars:
+          - QUARKUS_DATASOURCE_JDBC_URL=${{ secrets.DB_URL }}
+          - QUARKUS_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
+          - QUARKUS_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
         # If using Cloud SQL, you MUST add the instance connection name here:
         flags: --add-cloudsql-instances=${{ vars.CLOUD_SQL_INSTANCE }}
